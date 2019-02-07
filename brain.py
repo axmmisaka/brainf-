@@ -98,6 +98,7 @@ class program(object):
             if self.data[self.dataLocation] != 0:
                 self.data = self.subCode(newCode)
             return (0,)
+        # TODO: Logic is wrong, this could only serve one loop
         elif self.code[self.codeLocation] == ']':
             if self.data[self.dataLocation] != 0:
                 #Right after corresponding [
