@@ -4,9 +4,26 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
+#include "getopt.h"
+#include "stdbool.h"
 
 #define PREV -1
 #define NEXT 1
+
+static const char shortOptions[] = "f:dch";
+
+struct option longOptions[] = {
+    {"file", required_argument, NULL, 'f'},
+    {"visulize-data", no_argument, NULL, 'd'},
+    {"visulize-code", no_argument, NULL, 'c'},
+    {"help", no_argument, NULL, 'h'}
+};
+
+struct globalArgs_t{
+    char* filePath;
+    bool visData;
+    bool visCode;
+} globalArgs;
 
 // Node serves as an linked list than can be used in both data and code storage
 struct node{
@@ -207,11 +224,44 @@ int interprete(const char* programCode, struct node ** ptr){
     return 0;
 }
 
+void displayHelp(void){
+    printf("No help, figure out how this program can be used yourself.");
+}
 
 int main(int argc, char * argv[]){
-    char a[1000] = "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.";
-    struct node* newptrptr = initNode();
-    interprete(a, &newptrptr);
-    visualizeData(newptrptr);
+    //char a[1000] = "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.";
+    //struct node* newptrptr = initNode();
+
+    //Parse arguments
+    int longIndex;
+    char opt;
+    globalArgs.visCode = false;
+    globalArgs.visData = false;
+    opt = getopt_long(argc, argv, shortOptions, longOptions, &longIndex);
+    while(opt != -1){
+        switch(opt){
+        case 'f':
+            globalArgs.filePath = optarg;
+            break;
+        case 'd':
+            globalArgs.visData = true;
+            break;
+        case 'c':
+            globalArgs.visCode = true;
+            break;
+        case 'h':
+            displayHelp();
+            return 0;
+        default:
+            /*Won't actually get here*/
+            break;
+        }
+        opt = getopt_long(argc, argv, shortOptions, longOptions, &longIndex);
+    }
+    //Parse arguments
+    
+    printf("%s, %d, %d", globalArgs.filePath, globalArgs.visData, globalArgs.visCode);
+    //interprete(a, &newptrptr);
+    //visualizeData(newptrptr);
     return 0;
 }
